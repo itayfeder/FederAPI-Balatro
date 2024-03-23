@@ -21,9 +21,11 @@ end
 local back_changetoref = Back.change_to;
 function Back:change_to(new_back)
 	back_changetoref(self, new_back)
-	self.atlas = "centers"
-    if new_back.config.atlas then
-        self.atlas = new_back.config.atlas
+    if new_back then
+        self.atlas = "centers"
+        if new_back.config.atlas then
+            self.atlas = new_back.config.atlas
+        end
     end
 end
 
