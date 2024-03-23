@@ -10,9 +10,11 @@
 local back_initref = Back.init;
 function Back:init(selected_back)
 	back_initref(self, selected_back)
-	self.atlas = "centers"
-    if selected_back.config.atlas then
-        self.atlas = selected_back.config.atlas
+    if selected_back then
+        self.atlas = "centers"
+        if selected_back.config.atlas then
+            self.atlas = selected_back.config.atlas
+        end
     end
 end
 
