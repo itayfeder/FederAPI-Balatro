@@ -1,27 +1,25 @@
 --- STEAMODDED HEADER
---- MOD_NAME: Feder API - Custom Tarots
---- MOD_ID: FederAPI_CustomTarots
+--- MOD_NAME: Feder API - Custom Spectrals
+--- MOD_ID: FederAPI_CustomSpectrals
 --- MOD_AUTHOR: [itayfeder]
---- MOD_DESCRIPTION: Part of the Feder API. Add the ability to create custom tarots.
+--- MOD_DESCRIPTION: Part of the Feder API. Add the ability to create custom spectrals.
 
 ----------------------------------------------
 ------------MOD CODE -------------------------
 
-SMODS.Tarots = {}
-SMODS.Tarot = {
+SMODS.Spectrals = {}
+SMODS.Spectral = {
   	name = "",
   	slug = "",
-	cost = 3,
+	cost = 4,
 	config = {},
   	pos = {},
 	loc_txt = {},
 	discovered = false, 
-	consumeable = true,
-	effect = "",
-	cost_mult = 1.0
+	consumeable = true
 }
 
-function SMODS.Tarot:new(name, slug, config, pos, loc_txt, cost, cost_mult, effect, consumeable, discovered)
+function SMODS.Spectral:new(name, slug, config, pos, loc_txt, cost, consumeable, discovered)
     o = {}
     setmetatable(o, self)
     self.__index = self
@@ -37,15 +35,13 @@ function SMODS.Tarot:new(name, slug, config, pos, loc_txt, cost, cost_mult, effe
     o.cost = cost
     o.discovered = discovered or false
     o.consumeable = consumeable or true
-	o.effect = effect or ""
-	o.cost_mult = cost_mult or 1.0
 	return o
 end
 
-function SMODS.Tarot:register()
-	SMODS.Tarots[self.slug] = self
+function SMODS.Spectral:register()
+	SMODS.Spectrals[self.slug] = self
 
-	local minId = table_length(G.P_CENTER_POOLS['Tarot']) + 1
+	local minId = table_length(G.P_CENTER_POOLS['Spectral']) + 1
     local id = 0
     local i = 0
 	i = i + 1
@@ -56,14 +52,11 @@ function SMODS.Tarot:register()
 		discovered = self.discovered,
 		consumeable = self.consumeable,
 		name = self.name,
-		set = "Tarot",
+		set = "Spectral",
 		order = id,
 		key = self.slug,
 		pos = self.pos,
-        cost = self.cost,
-		config = self.config,
-		effect = self.effect,
-		cost_mult = self.cost_mult
+		config = self.config
 	}
 
 	for _i, sprite in ipairs(SMODS.Sprites) do
@@ -76,10 +69,10 @@ function SMODS.Tarot:register()
 
 	-- Now we replace the others
 	G.P_CENTERS[self.slug] = tarot_obj
-	table.insert(G.P_CENTER_POOLS['Tarot'], tarot_obj)
+	table.insert(G.P_CENTER_POOLS['Spectral'], tarot_obj)
 
 	-- Setup Localize text
-	G.localization.descriptions["Tarot"][self.slug] = self.loc_txt
+	G.localization.descriptions["Spectral"][self.slug] = self.loc_txt
 
 	-- Load it
 	for g_k, group in pairs(G.localization) do
@@ -105,14 +98,14 @@ function SMODS.Tarot:register()
 		end
 	end
 
-	sendDebugMessage("The Tarot named " .. self.name .. " with the slug " .. self.slug ..
+	sendDebugMessage("The Spectral named " .. self.name .. " with the slug " .. self.slug ..
 						 " have been registered at the id " .. id .. ".")
 end
 
 
-function create_UIBox_your_collection_tarots()
-	local deck_tables = {}
-  
+function create_UIBox_your_collection_spectrals()
+    local deck_tables = {}
+
     G.your_collection = {}
     for j = 1, 2 do
         G.your_collection[j] = CardArea(
@@ -130,10 +123,10 @@ function create_UIBox_your_collection_tarots()
             }
         )
     end
-  
-	for j = 1, #G.your_collection do
-        for i = 1, 4 + j do
-            local center = G.P_CENTER_POOLS["Tarot"][i + (j - 1) * 4 + j - 1]
+
+    for j = 1, #G.your_collection do
+        for i = 1, 3 + j do
+            local center = G.P_CENTER_POOLS["Spectral"][i + (j - 1) * 3 + j - 1]
 
             local card = Card(G.your_collection[j].T.x + G.your_collection[j].T.w / 2, G.your_collection[j].T.y, G
                 .CARD_W,
@@ -143,13 +136,13 @@ function create_UIBox_your_collection_tarots()
         end
     end
 
-    local tarot_options = {}
-    for i = 1, math.ceil(#G.P_CENTER_POOLS.Tarot / 11) do
-        table.insert(tarot_options,
-            localize('k_page') .. ' ' .. tostring(i) .. '/' .. tostring(math.ceil(#G.P_CENTER_POOLS.Tarot / 11)))
+    local spectral_options = {}
+    for i = 1, math.ceil(#G.P_CENTER_POOLS.Spectral / 9) do
+        table.insert(spectral_options,
+            localize('k_page') .. ' ' .. tostring(i) .. '/' .. tostring(math.ceil(#G.P_CENTER_POOLS.Spectral / 9)))
     end
-  
-	INIT_COLLECTION_CARD_ALERTS()
+
+    INIT_COLLECTION_CARD_ALERTS()
 
     local t = create_UIBox_generic_options({
         back_func = 'your_collection',
@@ -160,11 +153,11 @@ function create_UIBox_your_collection_tarots()
                 config = { align = "cm", padding = 0 },
                 nodes = {
                     create_option_cycle({
-                        options = tarot_options,
+                        options = spectral_options,
                         w = 4.5,
                         cycle_shoulders = true,
                         opt_callback =
-                        'your_collection_tarot_page',
+                        'your_collection_spectral_page',
                         focus_args = { snap_to = true, nav = 'wide' },
                         current_option = 1,
                         colour = G
@@ -175,8 +168,8 @@ function create_UIBox_your_collection_tarots()
             },
         }
     })
-	return t
-  end
+    return t
+end
 
 ----------------------------------------------
 ------------MOD CODE END----------------------
